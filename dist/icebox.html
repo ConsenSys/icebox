@@ -37,9 +37,9 @@
         document.getElementById('sendFrom').innerHTML = ''
         document.getElementById('addr').innerHTML = ''
         for (var i=0; i<addresses.length; ++i) {
-          document.getElementById('addr').innerHTML += '<div>' + addresses[i] + '</div>'
+          document.getElementById('addr').innerHTML += '<div>' + web3.toChecksumAddress(addresses[i]) + '</div>'
           if (i !== (addresses.length-1)) {
-            addrString += addresses[i] + '_';
+            addrString += addresses[i] + '_'; // i dont see any dashes on the page
           }
           else {
             addrString += addresses[i];
@@ -116,6 +116,9 @@
 
         var fromAddr = document.getElementById('sendFrom').value
         var toAddr = document.getElementById('sendTo').value
+
+
+
         var valueEth = document.getElementById('sendValueAmount').value
         var value = parseFloat(valueEth)*1.0e18
         var nonce = parseInt(document.getElementById('nonce').value)
@@ -129,27 +132,30 @@
             return sendEth();
           }
 
-          var rawSignedTx = lightwallet.signing.signTx(global_keystore, pwDerivedKey, rawUnsignedTx, fromAddr)
-          document.getElementById('rawSignedTx').value = rawSignedTx
+          var hex = lightwallet.signing.signTx(global_keystore, pwDerivedKey, rawUnsignedTx, fromAddr)
+          document.getElementById('rawSignedTx').value = hex
 
           // Add link to Workflow app
           var workflowURL = 'workflow://run-workflow?name=TransactionQR&input=text&text='
-          document.getElementById('workflowTx').innerHTML = '<a href="' + workflowURL + rawSignedTx + '">Transaction QR Code (Workflow App)</a>';
+          document.getElementById('workflowTx').innerHTML = '<a href="' + workflowURL + hex + '">Transaction QR Code (Workflow App)</a>';
+          drawQR({rawSignedTx: hex})
         })
-          drawQR()
       }
 
-      buildQrString = (apiKey)=>{
-        var signedTx = document.getElementById('rawSignedTx').value;
-        var etherscanString = "https://api.etherscan.io/api?module=proxy&action=eth_sendRawTransaction&hex="+ signedTx +"&apikey="+apiKey;
+      buildQrString = (args)=>{
+        args['apiKey'] = args['apiKey'] || "RCS8D6GHK9345T7ZVZJ6P491X9X6IMZ2AH"
+        args['hex'] = args['hex'] || document.getElementById('rawSignedTx').value;
+        console.log("args:", args)
+        var etherscanString = "https://api.etherscan.io/api?module=proxy&action=eth_sendRawTransaction&hex="+ args['hex'] +"&apikey="+args['apiKey'];
         var svg_string = qr.imageSync(etherscanString, { type: 'svg' });
         return svg_string
       }
 
-      drawQR = (apiKey)=>{
-        var svg_string = buildQrString(apiKey || "RCS8D6GHK9345T7ZVZJ6P491X9X6IMZ2AH");
+      drawQR = (args)=>{
+        var svg_string = buildQrString(args);
         var canvas = document.getElementById('canvas');
         var ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         var data = svg_string
         var DOMURL = window.URL || window.webkitURL || window;
         var img = new Image();
