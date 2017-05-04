@@ -4,7 +4,7 @@
 </head>
   <body>
     <script src="./lightwallet.min.js"></script>
-    <script src="./qr-image.js"></script>
+    <script src="./index.js"></script>
     <script>
 
       var global_keystore;
@@ -30,6 +30,9 @@
       }
 
       function showAddresses() {
+        if(typeof web3 === 'undefined'){
+            web3 = new Web3();
+        }
         var addresses = global_keystore.getAddresses();
         document.getElementById('addr').innerHTML = 'Retrieving addresses...'
 
@@ -106,7 +109,7 @@
           }
 
           var seed = global_keystore.getSeed(pwDerivedKey);
-          alert('Your seed is: "' + seed + '". Please write it down.');
+          alert('Your seed is:\n\n"' + seed + '"\n\n. Please write it down.');
         })
       }
 
@@ -127,6 +130,7 @@
         var rawUnsignedTx = lightwallet.txutils.valueTx({to: toAddr, value: value, gasPrice: gasPrice, gasLimit: gas, nonce: nonce})
 
         global_keystore.keyFromPassword(password, function(err, pwDerivedKey) {
+          console.log("PWDK: ", pwDerivedKey);
           if(! global_keystore.isDerivedKeyCorrect(pwDerivedKey)) {
             alert('Wrong password');
             return sendEth();

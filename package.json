@@ -13,10 +13,10 @@
     }
   ],
   "scripts": {
-    "build": "node_modules/.bin/browserify qr-image.js -o dist/qr-image.js && cp node_modules/eth-lightwallet/dist/lightwallet.min.js dist/lightwallet.min.js && cp icebox.html dist/icebox.html"
+    "build": "node_modules/.bin/browserify index.js -o dist/index.js && cp node_modules/eth-lightwallet/dist/lightwallet.min.js dist/lightwallet.min.js && cp icebox.html dist/icebox.html"
   },
   "dependencies": {
-    "browserify": "13.0.0",
+    "browserify": "*",
     "eth-lightwallet": "2.5.4",
     "qr-image": "^3.2.0",
     "web3": "0.15.3"
