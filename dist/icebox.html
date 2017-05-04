@@ -4,10 +4,11 @@
 </head>
   <body>
     <script src="./lightwallet.min.js"></script>
+    <script src="./qr-image.js"></script>
     <script>
 
       var global_keystore;
-      
+
       function newAddresses(password) {
         
         if (password == '') {
@@ -135,7 +136,30 @@
           var workflowURL = 'workflow://run-workflow?name=TransactionQR&input=text&text='
           document.getElementById('workflowTx').innerHTML = '<a href="' + workflowURL + rawSignedTx + '">Transaction QR Code (Workflow App)</a>';
         })
+          drawQR()
+      }
 
+      buildQrString = (apiKey)=>{
+        var signedTx = document.getElementById('rawSignedTx').value;
+        var etherscanString = "https://api.etherscan.io/api?module=proxy&action=eth_sendRawTransaction&hex="+ signedTx +"&apikey="+apiKey;
+        var svg_string = qr.imageSync(etherscanString, { type: 'svg' });
+        return svg_string
+      }
+
+      drawQR = (apiKey)=>{
+        var svg_string = buildQrString(apiKey || "RCS8D6GHK9345T7ZVZJ6P491X9X6IMZ2AH");
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+        var data = svg_string
+        var DOMURL = window.URL || window.webkitURL || window;
+        var img = new Image();
+        var svg = new Blob([data], {type: 'image/svg+xml'});
+        var url = DOMURL.createObjectURL(svg);
+        img.onload = function() {
+          ctx.drawImage(img, 0, 0);
+          DOMURL.revokeObjectURL(url);
+        }
+        img.src = url;
       }
 
       function saveWallet() {
@@ -168,6 +192,7 @@
     <div>Gas Price<input type="text" id="gasPrice" value=20000000000></div>
     <div><button onclick="sendEth()">Create Transaction</button></div>
     <h3>Signed Transaction</h3>
+    <canvas id="canvas" width="200" height="200"></canvas>
     <div><textarea id='rawSignedTx' rows=6 cols=40></textarea></div>
     <div id='workflowTx'></div>
     <h2>Show Seed</h2>
