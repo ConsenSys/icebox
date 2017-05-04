@@ -116,11 +116,16 @@
       function sendEth() {
         var password = prompt('Enter password to create and sign transaction', '');
         if(! password) { return false; }
+        if(typeof web3 === 'undefined'){
+            web3 = new Web3();
+        }
 
         var fromAddr = document.getElementById('sendFrom').value
         var toAddr = document.getElementById('sendTo').value
-
-
+        if(! web3.isAddress(toAddr)) { 
+          alert("'To' address improperly formatted");
+          return false; 
+        }
 
         var valueEth = document.getElementById('sendValueAmount').value
         var value = parseFloat(valueEth)*1.0e18
@@ -130,7 +135,6 @@
         var rawUnsignedTx = lightwallet.txutils.valueTx({to: toAddr, value: value, gasPrice: gasPrice, gasLimit: gas, nonce: nonce})
 
         global_keystore.keyFromPassword(password, function(err, pwDerivedKey) {
-          console.log("PWDK: ", pwDerivedKey);
           if(! global_keystore.isDerivedKeyCorrect(pwDerivedKey)) {
             alert('Wrong password');
             return sendEth();
@@ -142,7 +146,7 @@
           // Add link to Workflow app
           var workflowURL = 'workflow://run-workflow?name=TransactionQR&input=text&text='
           document.getElementById('workflowTx').innerHTML = '<a href="' + workflowURL + hex + '">Transaction QR Code (Workflow App)</a>';
-          drawQR({rawSignedTx: hex})
+          drawQR({hex: hex})
         })
       }
 
@@ -150,7 +154,7 @@
         args['apiKey'] = args['apiKey'] || "RCS8D6GHK9345T7ZVZJ6P491X9X6IMZ2AH"
         args['hex'] = args['hex'] || document.getElementById('rawSignedTx').value;
         var etherscanString = "https://api.etherscan.io/api?module=proxy&action=eth_sendRawTransaction&hex="+ args['hex'] +"&apikey="+args['apiKey'];
-        var svg_string = qr.imageSync(etherscanString, { type: 'svg' });
+        var svg_string = Qr.imageSync(etherscanString, { type: 'svg' });
         return svg_string
       }
 
