@@ -4,8 +4,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body { 
-      width: 100%;
-      margin: 0;
+      width: 97%;
+      margin: auto;
       background-color: #f0f9FF; 
     }
     input{ width: 100%; }
@@ -164,7 +164,7 @@
         args['apiKey'] = args['apiKey'] || "RCS8D6GHK9345T7ZVZJ6P491X9X6IMZ2AH"
         args['hex'] = args['hex'] || document.getElementById('rawSignedTx').value;
         var etherscanString = "https://api.etherscan.io/api?module=proxy&action=eth_sendRawTransaction&hex="+ args['hex'] +"&apikey="+args['apiKey'];
-        var svg_string = Qr.imageSync(etherscanString, { type: 'svg' });
+        var svg_string = Qr.imageSync(etherscanString, { type: 'svg', size: '5' });
         return svg_string
       }
 
@@ -172,8 +172,8 @@
         var svg_string = buildQrString(args);
         var canvas = document.getElementById('canvas');
         var length = (window.innerWidth > 0) ? window.innerWidth : screen.width;
-        canvas.style.width = length;
-        canvas.style.height = length;
+        // canvas.style.width = length;
+        // canvas.style.height = length;
         var ctx = canvas.getContext('2d');
         ctx.canvas.height = length;
         ctx.canvas.width = length;
@@ -219,8 +219,9 @@
     <div>Nonce: <input type="text" id="nonce"></div>
     <div>Gas Price<input type="text" id="gasPrice" value=20000000000></div>
     <div><button onclick="sendEth()">Create Transaction</button></div>
-    <h3>Signed Transaction</h3>
-    <canvas id="canvas"></canvas>
+    <h4>Scan to send through Etherscan API</h4>
+    <canvas id="canvas" style="width:300px; height:300px"></canvas>
+    <h3>Signed Transaction Data</h3>
     <div><textarea id='rawSignedTx' rows=6 cols=40></textarea></div>
     <div id='workflowTx'></div>
     <h2>Show Seed</h2>
