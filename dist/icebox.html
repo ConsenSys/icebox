@@ -164,7 +164,7 @@
         args['apiKey'] = args['apiKey'] || "RCS8D6GHK9345T7ZVZJ6P491X9X6IMZ2AH"
         args['hex'] = args['hex'] || document.getElementById('rawSignedTx').value;
         var etherscanString = "https://api.etherscan.io/api?module=proxy&action=eth_sendRawTransaction&hex="+ args['hex'] +"&apikey="+args['apiKey'];
-        var svg_string = Qr.imageSync(etherscanString, { type: 'svg', size: '5' });
+        var svg_string = Qr.imageSync(etherscanString, { type: 'svg' });
         return svg_string
       }
 
