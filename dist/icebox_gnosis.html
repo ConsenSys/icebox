@@ -1,0 +1,262 @@
+<html>
+<head>
+  <title>icebox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { 
+      width: 97%;
+      margin: auto;
+      background-color: #f0f9FF; 
+    }
+    input{ width: 100%; }
+    textarea{ width: 100%; }
+  </style>
+</head>
+  <body>
+    <script src="./lightwallet.min.js"></script>
+    <script src="./index.js"></script>
+    <script>
+
+      var global_keystore;
+
+      function newAddresses(password) {
+        
+        if (password == '') {
+          password = prompt('Enter password to retrieve addresses', '');
+          if(! password) { return false; }
+        }
+
+        global_keystore.keyFromPassword(password, function(err, pwDerivedKey) {
+          if(! global_keystore.isDerivedKeyCorrect(pwDerivedKey)) {
+            alert('Wrong password');
+            return newAddresses('');
+          }
+          
+          var numAddr = parseInt(document.getElementById('numAddr').value)
+          global_keystore.generateNewAddress(pwDerivedKey, numAddr);
+
+          showAddresses();
+        });
+      }
+
+      function showAddresses() {
+        if(typeof web3 === 'undefined'){
+            web3 = new Web3();
+        }
+        var addresses = global_keystore.getAddresses();
+        document.getElementById('addr').innerHTML = 'Retrieving addresses...'
+
+        var addrString = ''
+        document.getElementById('sendFrom').innerHTML = ''
+        document.getElementById('addr').innerHTML = ''
+        for (var i=0; i<addresses.length; ++i) {
+          document.getElementById('addr').innerHTML += '<div>' + web3.toChecksumAddress(addresses[i]) + '</div>'
+          if (i !== (addresses.length-1)) {
+            addrString += addresses[i] + '_'; // i dont see any dashes on the page
+          }
+          else {
+            addrString += addresses[i];
+          }
+        }
+        
+        // Add link to Workflow app
+        var workflowURL = 'workflow://run-workflow?name=AddressQR&input=text&text='
+        document.getElementById('workflowAddr').innerHTML = '<a href="' + workflowURL + addrString + '">Address QR Codes (Workflow App)</a>';
+
+        // Add the 'sendFrom' modal
+        document.getElementById('sendFrom').innerHTML = ''
+        for (var i=0; i<addresses.length; ++i) {
+          document.getElementById('sendFrom').innerHTML += '<option value="' + addresses[i] + '">' + addresses[i] + '</option>'
+        }
+
+      }
+
+      function setSeed() {
+
+        var password = prompt('Enter password to encrypt your seed for this session', '');
+        if(! password) { return false; }
+
+        var randomSeed = document.getElementById('seed').value;
+        
+        lightwallet.keystore.createVault({
+          password: password,
+          seedPhrase: randomSeed,
+          hdPathString: "m/0'/0'/0'"
+        }, function(err, ks) {
+          window.global_keystore = ks;
+          newAddresses(password);
+          document.getElementById('seed').value = '';
+        });
+      }
+
+      function newWallet() {
+        var extraEntropy = document.getElementById('userEntropy').value;
+        document.getElementById('userEntropy').value = '';
+        var randomSeed = lightwallet.keystore.generateRandomSeed(extraEntropy);
+
+        var infoString = 'Your new wallet seed is: "' + randomSeed + 
+          '". Please write it down on paper, you will need it to access your wallet. Do not let anyone see this seed or they can take your Ether. Please chooses a password to encrypt your wallet for this session.'
+
+        var password = prompt(infoString, '');
+        if(! password) { return false; }
+
+        lightwallet.keystore.createVault({
+          password: password,
+          seedPhrase: randomSeed
+        }, function(err, ks) {
+          window.global_keystore = ks;
+          newAddresses(password);
+        });
+      }
+
+      function showSeed() {
+        var password = prompt('Enter your password to show your seed.', '');
+        if(! password) { return false; }
+
+        global_keystore.keyFromPassword(password, function(err, pwDerivedKey) {
+          if(! global_keystore.isDerivedKeyCorrect(pwDerivedKey)) {
+            alert('Wrong password');
+            return showSeed();
+          }
+
+          var seed = global_keystore.getSeed(pwDerivedKey);
+          alert('Your seed is:\n\n"' + seed + '"\n\n. Please write it down.');
+        })
+      }
+
+      function sendEth() {
+        var password = prompt('Enter password to create and sign transaction', '');
+        if(! password) { return false; }
+        if(typeof web3 === 'undefined'){
+            web3 = new Web3();
+        }
+
+        var abi = [{"constant":false,"inputs":[{"name":"transactionId","type":"uint256"}],"name":"confirmTransaction","outputs":[],"payable":false,"type":"function"}, {"constant":false,"inputs":[{"name":"destination","type":"address"},{"name":"value","type":"uint256"},{"name":"data","type":"bytes"}],"name":"submitTransaction","outputs":[{"name":"transactionId","type":"uint256"}],"payable":false,"type":"function"}]
+
+        var fromAddr = document.getElementById('sendFrom').value
+        var nonce = parseInt(document.getElementById('nonce').value)
+        var gasPrice = parseInt(document.getElementById('gasPrice').value)
+        var gasLimit = parseInt(document.getElementById('gasLimit').value)
+        var walletAddr = document.getElementById('walletAddress').value
+        var txObject = {to: walletAddr, value: 0, gasLimit: gasLimit, gasPrice: gasPrice, nonce: nonce}
+
+        var rawUnsignedTx
+
+        var txId = document.getElementById('txId').value
+        var toAddr = document.getElementById('sendTo').value
+        if (web3.isAddress(toAddr)) {
+          // submit Transaction
+          console.log('In submitTransaction')
+          var toAddr = document.getElementById('sendTo').value
+          if(! web3.isAddress(toAddr)) { 
+            alert("'To' address improperly formatted");
+            return false;
+          }
+          var valueEth = document.getElementById('sendValueAmount').value
+          var value = parseFloat(valueEth)*1.0e18
+          rawUnsignedTx = lightwallet.txutils.functionTx(abi, 'submitTransaction', [toAddr, value, '0x'], txObject)
+
+        }
+        else {
+          // confirm Transaction
+          console.log('In confirmTransaction')
+          var txIdVal = parseInt(txId)
+          rawUnsignedTx = lightwallet.txutils.functionTx(abi, 'confirmTransaction', [txIdVal], txObject)
+        }
+
+        global_keystore.keyFromPassword(password, function(err, pwDerivedKey) {
+          if(! global_keystore.isDerivedKeyCorrect(pwDerivedKey)) {
+            alert('Wrong password');
+            return sendEth();
+          }
+
+          var hex = lightwallet.signing.signTx(global_keystore, pwDerivedKey, rawUnsignedTx, fromAddr)
+          document.getElementById('rawSignedTx').value = hex
+
+          // Add link to Workflow app
+          var workflowURL = 'workflow://run-workflow?name=TransactionQR&input=text&text='
+          document.getElementById('workflowTx').innerHTML = '<a href="' + workflowURL + hex + '">Transaction QR Code (Workflow App)</a>';
+          drawQR({hex: hex})
+        })
+      }
+
+      buildQrString = (args)=>{
+        args['apiKey'] = args['apiKey'] || "RCS8D6GHK9345T7ZVZJ6P491X9X6IMZ2AH"
+        args['hex'] = args['hex'] || document.getElementById('rawSignedTx').value;
+        var etherscanString = "https://api.etherscan.io/api?module=proxy&action=eth_sendRawTransaction&hex="+ args['hex'] +"&apikey="+args['apiKey'];
+        var svg_string = Qr.imageSync(etherscanString, { type: 'svg' });
+        return svg_string
+      }
+
+      drawQR = (args)=>{
+        var svg_string = buildQrString(args);
+        var canvas = document.getElementById('canvas');
+        var length = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+        // canvas.style.width = length;
+        // canvas.style.height = length;
+        var ctx = canvas.getContext('2d');
+        ctx.canvas.height = length;
+        ctx.canvas.width = length;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        var data = svg_string
+        var DOMURL = window.URL || window.webkitURL || window;
+        var img = new Image();
+        var svg = new Blob([data], {type: 'image/svg+xml'});
+        var url = DOMURL.createObjectURL(svg);
+        img.onload = function() {
+          ctx.drawImage(img, 0, 0);
+          DOMURL.revokeObjectURL(url);
+        }
+        img.src = url;
+      }
+
+      function saveWallet() {
+        var serialized = global_keystore.serialize();
+        document.getElementById('savedWallet').value = serialized;
+      }
+
+      function loadWallet() {
+        var serialized = document.getElementById('loadedWallet').value;
+        global_keystore = lightwallet.keystore.deserialize(serialized);
+        showAddresses();
+        alert('Wallet Loaded.');
+      }
+
+    </script>
+    <h1>icebox</h1>
+    <h2>New Wallet</h2>
+    <div><input type="text" id="userEntropy" placeholder="Type random text to generate entropy" size="80"></input><button onclick="newWallet()">Create New Wallet</button></div>
+    <h2>Restore Wallet From Seed</h2>
+    <div><input type="text" id="seed" value="" size="80"></input><button onclick="setSeed()">Restore wallet from Seed</button></div>
+    <h2>Show Addresses</h2>
+    <div>Show <input type="text" id="numAddr" size="5" value="3"></input> more address(es) <button onclick="newAddresses('')">Show</button></div>
+    <div id="addr"></div>
+    <div id="workflowAddr"></div>
+    <h2>Wallet address</h2>
+    <div><input type="text" size="40" id="walletAddress"></input></div> 
+    <h2>Transaction details</h2>
+    <div>Key: <select id="sendFrom"></select></div>
+    <div>Nonce: <input type="text" id="nonce"></div>
+    <div>Gas Price<input type="text" id="gasPrice" value=20000000000></div>
+    <div>Gas Limit<input type="text" id="gasLimit" value=60000></div>
+    <h2>Submit Transaction</h2>
+    <div>To: <input type="text" size="40" id="sendTo"></input></div>
+    <div>Ether: <input type="text" id="sendValueAmount"></div>
+    <h2>Confirm Transaction</h2>
+    <div>Tx ID: <input type="text" size="40" id="txId"></input></div>
+    <div><button onclick="sendEth()">Create Transaction</button></div>
+    <h4>Scan to send through Etherscan API</h4>
+    <canvas id="canvas" style="width:300px; height:300px"></canvas>
+    <h3>Signed Transaction Data</h3>
+    <div><textarea id='rawSignedTx' rows=6 cols=40></textarea></div>
+    <div id='workflowTx'></div>
+    <h2>Show Seed</h2>
+    <button onclick="showSeed()">Show Seed</button>
+    <h2>Save Encrypted Wallet</h2>
+    <div><textarea id='savedWallet' rows=6 cols=40></textarea></div>
+    <button onclick="saveWallet()">Save Wallet</button>
+    <h2>Load Encrypted Wallet</h2>
+    <div><textarea id='loadedWallet' rows=6 cols=40></textarea></div>
+    <button onclick="loadWallet()">Load Wallet</button>
+  </body>
+</html>
