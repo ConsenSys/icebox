@@ -2,9 +2,9 @@
   "name": "icebox",
   "version": "0.3.0",
   "description": "Lightwallet-powered cold storage solution",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/ConsenSys/icebox.git"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ConsenSys/icebox.git"
   },
   "contributors": [
     {
@@ -13,10 +13,12 @@
     }
   ],
   "scripts": {
-    "build": "cp node_modules/eth-lightwallet/dist/lightwallet.min.js dist/lightwallet.min.js && cp icebox.html dist/icebox.html"
+    "build": "node_modules/.bin/browserify index.js -o dist/index.js && cp node_modules/eth-lightwallet/dist/lightwallet.min.js dist/lightwallet.min.js && cp icebox.html dist/icebox.html"
   },
   "dependencies": {
-    "eth-lightwallet": "2.5.2",
-    "web3" : "0.15.1"
+    "browserify": "*",
+    "eth-lightwallet": "2.5.4",
+    "qr-image": "^3.2.0",
+    "web3": "0.15.3"
   }
 }
