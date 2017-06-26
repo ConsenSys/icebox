@@ -141,7 +141,7 @@
         var value = parseFloat(valueEth)*1.0e18
         var nonce = parseInt(document.getElementById('nonce').value)
         var gasPrice = parseInt(document.getElementById('gasPrice').value)
-        var gas = 21000
+        var gas = 23000
         var rawUnsignedTx = lightwallet.txutils.valueTx({to: toAddr, value: value, gasPrice: gasPrice, gasLimit: gas, nonce: nonce})
 
         global_keystore.keyFromPassword(password, function(err, pwDerivedKey) {
