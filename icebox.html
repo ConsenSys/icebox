@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Foundation for Sites</title>
   <link rel="stylesheet" href="./foundation.min.css">
-  <link rel="stylesheet" href="./app.css">
   <style>
     body { 
       width: 97%;
@@ -216,7 +215,6 @@
         </div>
       </div>
       
-      <form>
         <div class="grid-x grid-padding-x">
           <div class="large-12 cell">
             <label>New Wallet</label>
@@ -224,11 +222,9 @@
             <button class="button" onclick="newWallet()">Create New Wallet</button>
           </div>
         </div>
-      </form>
 
       <hr />
       
-      <form>
         <div class="grid-x grid-padding-x">
           <div class="large-12 cell">
             <label>Restore Wallet From Seed</label>
@@ -236,14 +232,12 @@
             <button class="button" onclick="setSeed()">Restore wallet from Seed</button>
           </div>
         </div>
-      </form>
 
       <hr />
       
-      <form>
         <div class="grid-x grid-padding-x">
           <div class="large-12 cell">
-            <label>Show Addresses</label>
+            <label>Show (x) More Addresses</label>
             <input type="text" id="numAddr" size="5" value="3"></input>
             <button class="button" onclick="newAddresses('')">Show</button>
             <label class="subheader">HD addresses derived from BIP32 12-word seed</label>
@@ -251,7 +245,6 @@
             <div id="workflowAddr"></div>
           </div>
         </div>
-      </form>
 
       <hr />
 
@@ -261,7 +254,6 @@
         </div>
       </div>
 
-      <form>
         <div class="grid-x grid-padding-x">
           <div class="large-12 cell">
             <label>From</label>
@@ -292,13 +284,12 @@
           </div>
           
         </div>
-      </form>
 
       <div class="grid-x grid-padding-x">
         <div class="large-12 cell">
-          <h4>Scan to send through Etherscan API</h4>
+          <label>Scan to send through Etherscan API</label>
           <canvas id="canvas" style="width:300px; height:300px"></canvas>
-          <h3>Signed Transaction Data</h3>
+          <label>Signed Transaction Data</label>
           <div><textarea id='rawSignedTx' rows=6 cols=40></textarea></div>
           <div id='workflowTx'></div>
         </div>
@@ -308,7 +299,7 @@
 
       <div class="grid-x grid-padding-x">
         <div class="large-12 cell">
-          <h2>Show Seed</h2>
+          <label>Show Seed</label>
           <button class="button" onclick="showSeed()">Show Seed</button>
         </div>
       </div>
@@ -317,7 +308,7 @@
 
       <div class="grid-x grid-padding-x">
         <div class="large-12 cell">
-          <h2>Save Encrypted Wallet</h2>
+          <label>Save Encrypted Wallet (JSON)</label>
           <textarea id='savedWallet' rows=6 cols=40></textarea>
           <button class="button" onclick="saveWallet()">Save Wallet</button>
         </div>
@@ -327,7 +318,7 @@
 
       <div class="grid-x grid-padding-x">
         <div class="large-12 cell">
-          <h2>Load Encrypted Wallet</h2>
+          <label>Load Encrypted Wallet (JSON)</label>
           <textarea id='loadedWallet' rows=6 cols=40></textarea>
           <button class="button" onclick="loadWallet()">Load Wallet</button>
         </div>
