@@ -1,7 +1,12 @@
 <html>
 <head>
   <title>icebox</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Foundation for Sites</title>
+  <link rel="stylesheet" href="./foundation.min.css">
+  <link rel="stylesheet" href="./app.css">
   <style>
     body { 
       width: 97%;
@@ -203,35 +208,131 @@
       }
 
     </script>
-    <h1>icebox</h1>
-    <h2>New Wallet</h2>
-    <div><input type="text" id="userEntropy" placeholder="Type random text to generate entropy" size="80"></input><button onclick="newWallet()">Create New Wallet</button></div>
-    <h2>Restore Wallet From Seed</h2>
-    <div><input type="text" id="seed" value="" size="80"></input><button onclick="setSeed()">Restore wallet from Seed</button></div>
-    <h2>Show Addresses</h2>
-    <div>Show <input type="text" id="numAddr" size="5" value="3"></input> more address(es) <button onclick="newAddresses('')">Show</button></div>
-    <div id="addr"></div>
-    <div id="workflowAddr"></div>
-    <h2>Send Ether</h2>
-    <div>From: <select id="sendFrom"></select></div>
-    <div>To: <input type="text" size="40" id="sendTo"></input></div>
-    <div>Ether: <input type="text" id="sendValueAmount"></div>
-    <div>Nonce: <input type="text" id="nonce"></div>
-    <div>Gas Price<input type="text" id="gasPrice" value=20000000000></div>
-    <div>Gas Limit<input type="text" id="gasLimit" value=21000></div>
-    <div><button onclick="sendEth()">Create Transaction</button></div>
-    <h4>Scan to send through Etherscan API</h4>
-    <canvas id="canvas" style="width:300px; height:300px"></canvas>
-    <h3>Signed Transaction Data</h3>
-    <div><textarea id='rawSignedTx' rows=6 cols=40></textarea></div>
-    <div id='workflowTx'></div>
-    <h2>Show Seed</h2>
-    <button onclick="showSeed()">Show Seed</button>
-    <h2>Save Encrypted Wallet</h2>
-    <div><textarea id='savedWallet' rows=6 cols=40></textarea></div>
-    <button onclick="saveWallet()">Save Wallet</button>
-    <h2>Load Encrypted Wallet</h2>
-    <div><textarea id='loadedWallet' rows=6 cols=40></textarea></div>
-    <button onclick="loadWallet()">Load Wallet</button>
+    <div class="grid-container">
+
+      <div class="grid-x grid-padding-x">
+        <div class="large-12 cell">
+          <h1>Icebox</h1>
+        </div>
+      </div>
+      
+      <form>
+        <div class="grid-x grid-padding-x">
+          <div class="large-12 cell">
+            <label>New Wallet</label>
+            <input type="text" id="userEntropy" placeholder="Type random text to generate entropy" size="80"></input>
+            <button class="button" onclick="newWallet()">Create New Wallet</button>
+          </div>
+        </div>
+      </form>
+
+      <hr />
+      
+      <form>
+        <div class="grid-x grid-padding-x">
+          <div class="large-12 cell">
+            <label>Restore Wallet From Seed</label>
+            <input type="text" id="seed" value="" size="80"></input>
+            <button class="button" onclick="setSeed()">Restore wallet from Seed</button>
+          </div>
+        </div>
+      </form>
+
+      <hr />
+      
+      <form>
+        <div class="grid-x grid-padding-x">
+          <div class="large-12 cell">
+            <label>Show Addresses</label>
+            <input type="text" id="numAddr" size="5" value="3"></input>
+            <button class="button" onclick="newAddresses('')">Show</button>
+            <label class="subheader">HD addresses derived from BIP32 12-word seed</label>
+            <div id="addr"></div>
+            <div id="workflowAddr"></div>
+          </div>
+        </div>
+      </form>
+
+      <hr />
+
+      <div class="grid-x grid-padding-x">
+        <div class="large-12 cell">
+          <h5>Send Ether</h5>
+        </div>
+      </div>
+
+      <form>
+        <div class="grid-x grid-padding-x">
+          <div class="large-12 cell">
+            <label>From</label>
+            <select id="sendFrom"></select>
+          </div>
+          <div class="large-12 cell">
+            <label>To</label>
+            <input type="text" size="40" id="sendTo"></input>
+          </div>
+          <div class="large-12 cell">
+            <label>Ether</label>
+            <input type="text" id="sendValueAmount">
+          </div>
+          <div class="large-12 cell">
+            <label>Nonce</label>
+            <input type="text" id="nonce">
+          </div>
+          <div class="large-12 cell">
+            <label>Gas Price (Wei)</label>
+            <input type="text" id="gasPrice" value=20000000000>
+          </div>
+          <div class="large-12 cell">
+            <label>Gas Limit</label>
+            <input type="text" id="gasLimit" value=21000>
+          </div>
+          <div class="large-12 cell">
+            <button class="button" onclick="sendEth()">Create Transaction</button>
+          </div>
+          
+        </div>
+      </form>
+
+      <div class="grid-x grid-padding-x">
+        <div class="large-12 cell">
+          <h4>Scan to send through Etherscan API</h4>
+          <canvas id="canvas" style="width:300px; height:300px"></canvas>
+          <h3>Signed Transaction Data</h3>
+          <div><textarea id='rawSignedTx' rows=6 cols=40></textarea></div>
+          <div id='workflowTx'></div>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="grid-x grid-padding-x">
+        <div class="large-12 cell">
+          <h2>Show Seed</h2>
+          <button class="button" onclick="showSeed()">Show Seed</button>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="grid-x grid-padding-x">
+        <div class="large-12 cell">
+          <h2>Save Encrypted Wallet</h2>
+          <textarea id='savedWallet' rows=6 cols=40></textarea>
+          <button class="button" onclick="saveWallet()">Save Wallet</button>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="grid-x grid-padding-x">
+        <div class="large-12 cell">
+          <h2>Load Encrypted Wallet</h2>
+          <textarea id='loadedWallet' rows=6 cols=40></textarea>
+          <button class="button" onclick="loadWallet()">Load Wallet</button>
+        </div>
+      </div>
+      
+    </div>
   </body>
 </html>
