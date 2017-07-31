@@ -123,6 +123,20 @@
         })
       }
 
+      function showPrivateKey() {
+        if(! password) { return false; }
+
+        var fromAddr = document.getElementById('sendFrom').value
+
+        global_keystore.keyFromPassword(password, function(err, pwDerivedKey) {
+          if(! global_keystore.isDerivedKeyCorrect(pwDerivedKey)) {
+            alert('Wrong password');
+            return showPrivateKey();
+          }
+
+        })
+      }
+
       function sendEth() {
         var password = prompt('Enter password to create and sign transaction', '');
         if(! password) { return false; }
@@ -227,6 +241,9 @@
     <div id='workflowTx'></div>
     <h2>Show Seed</h2>
     <button onclick="showSeed()">Show Seed</button>
+    <h2>Show PrivateKey</h2>
+    <div><textarea id='privateKey' rows=6 cols=40></textarea></div>
+    <button onclick="showPrivateKey()">Show PrivateKey</button>
     <h2>Save Encrypted Wallet</h2>
     <div><textarea id='savedWallet' rows=6 cols=40></textarea></div>
     <button onclick="saveWallet()">Save Wallet</button>
