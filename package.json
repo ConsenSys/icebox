@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "browserify": "*",
-    "eth-lightwallet": "2.5.4",
+    "eth-lightwallet": "2.5.6",
     "qr-image": "^3.2.0",
     "web3": "0.15.3"
   }
