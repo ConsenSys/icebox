@@ -1,6 +1,6 @@
 {
   "name": "icebox",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Lightwallet-powered cold storage solution",
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "browserify": "*",
-    "eth-lightwallet": "2.5.4",
+    "eth-lightwallet": "2.5.6",
     "qr-image": "^3.2.0",
     "web3": "0.15.3"
   }

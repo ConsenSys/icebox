@@ -81,14 +81,14 @@ want to send to. Note: **Never enter an Ethereum address manually!!**
 Ethereum addresses don't have checksums. Always copy the address from
 a QR code or from a USB stick if on an airgapped computer. You also
 need to enter the nonce of the address you're sending from. You can
-find the nonce of an address using a block explorer like
-[EtherCamp](https://live.ether.camp/).
+find the nonce of an address using 
+[MyEtherWallet's Offline Transaction (Step 1)](https://www.myetherwallet.com/#offline-transaction) from an online computer.
 
 Once you hit "Create Transaction" a signed transaction is created and
 displayed. You can now take this signed transaction and transmit it to
 the network, for instance using `web3.eth.sendRawTransaction(tx)` in
 the geth console, or using a website such as
-[http://badmofo.github.io/ethsend/](http://badmofo.github.io/ethsend/). If
+[http://badmofo.github.io/ethsend/](http://badmofo.github.io/ethsend/) or [https://etherscan.io/pushTx](https://etherscan.io/pushTx). If
 you're using an airgapped computer you can use a USB stick to transfer
 the signed transaction out, or if you're using an iOS device you can
 use the Workflow App which will display the transaction as a QR code.
