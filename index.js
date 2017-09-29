@@ -13,7 +13,7 @@ window.isPositiveInteger = function(s)
 {
     return !!s.match(/^[0-9]+$/);
     // or Rob W suggests
-    return /^\d+$/.test(s);
+    // return /^\d+$/.test(s);
 }
 
 const BigNumber = require('bignumber.js')
